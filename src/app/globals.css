@@ -1,0 +1,406 @@
+@import "tailwindcss";
+
+/* ===========================================================================
+   SHALOM SPECIALITY COFFEE — Sistema visual
+   ---------------------------------------------------------------------------
+   Mundo: cemento y papel. La pagina es la misma barra de bar de especialidad,
+   ahora vista de dia: filetes de 1px como sistema de rejilla y una unica
+   fuente de luz, que es la fotografia del producto.
+
+   RITMO DE SUPERFICIE
+   La pagina alterna claro y oscuro seccion a seccion. Ninguna seccion comparte
+   fondo con la que tiene encima o debajo:
+
+     Hero        oscuro   (fotografia + velo)
+     Filosofia   crema    .surface-cream
+     Galeria     carbon   .surface-dark
+     Carta       blanco   .surface-paper
+     Resenas     carbon   .surface-dark   (tarjetas en .surface-paper)
+     Visitanos   crema    .surface-cream
+     Footer      carbon   .surface-dark
+
+   COLOR
+   La base es monocroma: negro, blanco y gris CALIDO. Sobre ella hay un unico
+   acento cromatico, el ambar tostado muestreado de la crema del espresso y del
+   tueste del grano en la propia fotografia del sitio. El acento se usa en
+   hover de botones, subrayado de enlace activo, filetes decorativos, iconos
+   pequenos y el badge de recomendado. Nunca como fondo de superficie grande:
+   en cuanto cubre area deja de ser acento y se convierte en tema.
+
+   Las fotografias a sangre (Hero, pie de foto de Galeria) llevan un velo NEGRO
+   fijo con texto blanco fijo, sin importar la superficie: son texto sobre
+   imagen, no superficie de pagina, y no usan estos tokens.
+=========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Tokens no cromaticos. Valor literal: no cambian con la superficie.
+--------------------------------------------------------------------------- */
+@theme {
+  /* ── Tipografia ────────────────────────────────────────────────────────
+     Serif editorial de alto contraste para display. Geometrica derivada de
+     la Futura para interfaz y cuerpo. Monoespaciada SOLO donde hay cifras
+     que alinear: precios y horarios. Nunca como disfraz "tecnico".        */
+  --font-display: var(--font-playfair), "Playfair Display", ui-serif, Georgia, serif;
+  --font-sans:    var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  /* ── Radio ─────────────────────────────────────────────────────────────
+     Canto vivo en controles. Las figuras usan `.rounded-edge`.            */
+  --radius-edge: 2px;
+
+  /* ── Curvas ────────────────────────────────────────────────────────────
+     Salida exponencial. Todo entra rapido y frena largo.                  */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  /* ── Rejilla ───────────────────────────────────────────────────────────
+     Un unico ancho de contenido para toda la pagina.                      */
+  --shell-max: 1400px;
+}
+
+/* ---------------------------------------------------------------------------
+   Tokens cromaticos. TODOS son indirectos: la utilidad de Tailwind emite
+   `var(--c-*)`, de modo que una clase de superficie puede redefinir la escala
+   entera por cascada y los componentes de dentro se recolorean solos, sin
+   condicionales en React y sin una sola prop de tema.
+--------------------------------------------------------------------------- */
+@theme inline {
+  --color-void:     var(--c-void);
+  --color-ink:      var(--c-ink);
+  --color-onyx:     var(--c-onyx);
+  --color-onyx-hi:  var(--c-onyx-hi);
+  --color-graphite: var(--c-graphite);
+  --color-slate:    var(--c-slate);
+  --color-cement:   var(--c-cement);
+  --color-ash:      var(--c-ash);
+  --color-mist:     var(--c-mist);
+  --color-snow:     var(--c-snow);
+
+  /* Acento unico. `accent` es el reposo y `accent-strong` el hover/activo.
+     Cada superficie trae su pareja: sobre carbon el ambar oscuro cae a 3,1:1
+     y dejaria de cumplir AA, asi que en oscuro se sustituye por su version
+     clara en vez de arrastrar el mismo hex a una superficie donde no se lee. */
+  --color-accent:        var(--c-accent);
+  --color-accent-strong: var(--c-accent-strong);
+  --color-accent-soft:   var(--c-accent-soft);
+
+  /* Alias semanticos historicos. Apuntan a la misma escala para que no
+     puedan desincronizarse. */
+  --color-fg:     var(--c-snow);
+  --color-fg-2:   var(--c-mist);
+  --color-fg-3:   var(--c-cement);
+  --color-rule:   var(--c-rule);
+  --color-rule-2: var(--c-rule-2);
+
+  --border-radius-edge: 0.875rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Superficies
+--------------------------------------------------------------------------- */
+
+/* Cada superficie existe en dos formas:
+     `.tokens-*`  redefine la escala de color y NADA mas.
+     `.surface-*` hace lo mismo y ademas pinta el fondo.
+   La barra de navegacion necesita la primera: va transparente sobre la
+   fotografia del Hero, asi que quiere la rampa clara del modo oscuro para que
+   el subrayado de acento se vea, pero no puede pintar fondo ninguno. */
+
+/* Escala clara sobre crema. Estado por defecto de la pagina. El gris lleva
+   sesgo CALIDO (hacia el amarillo, no hacia el azul) para que la fotografia
+   de comida se apoye en el fondo en vez de pelearse con el. */
+:root,
+.tokens-cream,
+.surface-cream {
+  color-scheme: light;
+
+  --c-void:     #f4f1ec;  /* fondo de seccion — blanco roto calido        */
+  --c-ink:      #ffffff;  /* superficie alterna                           */
+  --c-onyx:     #ffffff;  /* superficie de card sobre crema               */
+  --c-onyx-hi:  #faf8f4;  /* superficie de card en hover                  */
+  --c-graphite: #e7e2d9;  /* superficie sobre onyx, bordes fuertes        */
+  --c-slate:    #d8d2c7;  /* filetes visibles, iconografia inactiva       */
+  --c-cement:   #6b6459;  /* texto de apoyo — 5,9:1 sobre crema           */
+  --c-ash:      #6b6459;  /* texto terciario, metadatos                   */
+  --c-mist:     #3c382f;  /* texto de cuerpo                              */
+  --c-snow:     #17150f;  /* texto principal — casi negro, nunca #000     */
+
+  --c-rule:     rgb(23 21 15 / 0.12);
+  --c-rule-2:   rgb(23 21 15 / 0.26);
+
+  --c-accent:        #8a5a2b;  /* 5,2:1 sobre crema · 5,9:1 sobre blanco  */
+  --c-accent-strong: #6f4620;  /* 7,2:1 sobre crema                       */
+  --c-accent-soft:   rgb(138 90 43 / 0.14);
+}
+
+/* Papel blanco. Misma rampa de texto que la crema; solo cambia el plano de
+   fondo. Se usa en la Carta y en las tarjetas de resena, que necesitan quedar
+   por encima de la superficie de su seccion. */
+.tokens-paper,
+.surface-paper {
+  color-scheme: light;
+
+  --c-void:     #ffffff;
+  --c-ink:      #f4f1ec;
+  --c-onyx:     #faf8f4;
+  --c-onyx-hi:  #f4f1ec;
+  --c-graphite: #e7e2d9;
+  --c-slate:    #d8d2c7;
+  --c-cement:   #6b6459;
+  --c-ash:      #6b6459;
+  --c-mist:     #3c382f;
+  --c-snow:     #17150f;
+
+  --c-rule:     rgb(23 21 15 / 0.12);
+  --c-rule-2:   rgb(23 21 15 / 0.26);
+
+  --c-accent:        #8a5a2b;
+  --c-accent-strong: #6f4620;
+  --c-accent-soft:   rgb(138 90 43 / 0.14);
+}
+
+/* Carbon. La rampa se invierte entera: el texto casi negro pasa a casi blanco
+   y los filetes pasan de negro translucido a blanco translucido. Ningun
+   componente de dentro sabe en que superficie esta. */
+.tokens-dark,
+.surface-dark {
+  color-scheme: dark;
+
+  --c-void:     #16161a;  /* carbon — conecta con el velo del Hero        */
+  --c-ink:      #1c1c21;
+  --c-onyx:     #1f1f24;  /* superficie de card sobre carbon              */
+  --c-onyx-hi:  #26262c;
+  --c-graphite: #2e2e35;
+  --c-slate:    #3a3a42;
+  --c-cement:   #9a948a;  /* 6,4:1 sobre carbon                           */
+  --c-ash:      #9a948a;
+  --c-mist:     #d6d2ca;
+  --c-snow:     #f5f3ef;
+
+  --c-rule:     rgb(245 243 239 / 0.14);
+  --c-rule-2:   rgb(245 243 239 / 0.28);
+
+  --c-accent:        #c99a63;  /* 7,1:1 sobre carbon                      */
+  --c-accent-strong: #dcb385;
+  --c-accent-soft:   rgb(201 154 99 / 0.18);
+}
+
+/* Las tres clases pintan su propio fondo, de modo que una seccion declara su
+   superficie con una sola clase y no vuelve a tocar `bg-*`. */
+.surface-cream,
+.surface-paper,
+.surface-dark {
+  background-color: var(--c-void);
+  color: var(--c-mist);
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+@layer base {
+  html {
+    /* Lenis controla el scroll. El nativo se apaga para no competir. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+    background-color: var(--c-void);
+  }
+
+  body {
+    background-color: var(--c-void);
+    color: var(--c-mist);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    color: var(--c-snow);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* El navbar mide 68px. Las anclas paran por debajo de el, no detras. */
+  section[id] {
+    scroll-margin-top: 4.25rem;
+  }
+
+  ::selection {
+    background-color: var(--c-accent);
+    color: #ffffff;
+  }
+
+  /* El foco toma el acento en vez del color de texto: se ve sobre las tres
+     superficies y ademas identifica el sistema. */
+  :focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 3px;
+    border-radius: var(--radius-edge);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Utilidades del sistema
+--------------------------------------------------------------------------- */
+@layer utilities {
+  /* Cifras de ancho fijo: precios y horas se alinean en columna. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* Linea de puntos estilo carta de restaurante. */
+  .leader {
+    background-image: radial-gradient(circle, var(--c-rule-2) 1px, transparent 1px);
+    background-position: bottom 0.28em left 0;
+    background-size: 6px 1px;
+    background-repeat: repeat-x;
+  }
+
+  .rounded-edge {
+    border-radius: var(--border-radius-edge, 0.875rem);
+  }
+
+  /* ── Grading de galeria ────────────────────────────────────────────────
+     La biblioteca mezcla producto de estudio muy oscuro y contrastado con
+     tomas reales del local, planas y sobreexpuestas. Dos correcciones
+     opuestas dejan a las dos familias en el mismo sitio, de modo que la
+     rejilla se lea como una sesion y no como una carpeta.                */
+  .graded {
+    filter: brightness(1.05) contrast(0.93) saturate(0.88) sepia(0.06);
+  }
+
+  .graded-flat {
+    filter: brightness(0.93) contrast(1.14) saturate(0.8) sepia(0.1);
+  }
+
+  /* ── Mapa ──────────────────────────────────────────────────────────────
+     Google sirve el embed con su propia paleta y sin clave de API no hay
+     JSON de estilo posible. El tratamiento se hace por composicion: el
+     iframe se desatura y se contrasta, y encima va una lamina de acento en
+     `multiply` que le devuelve la temperatura del resto del sitio.       */
+  .map-canvas {
+    filter: grayscale(1) contrast(1.08) brightness(0.96);
+  }
+
+  .map-tint {
+    background-color: var(--c-accent);
+    mix-blend-mode: multiply;
+    opacity: 0.16;
+  }
+
+  /* Animacion de flotacion infinita (FloatImage). */
+  @keyframes float-up-down {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(calc(var(--float-amplitude, 12px) * -1)); }
+  }
+
+  .float-anim {
+    animation: float-up-down var(--float-duration, 3s) ease-in-out infinite;
+  }
+
+  /* Perspectiva 3D para TiltCard. */
+  .tilt-card-wrap {
+    perspective: 900px;
+    transform-style: preserve-3d;
+  }
+
+  .tilt-card-inner {
+    transform-style: preserve-3d;
+    transition: transform 0.12s ease;
+    will-change: transform;
+  }
+
+  /* Estados iniciales de las animaciones de entrada.
+     Se aplican SOLO cuando el JS ya ha arrancado (clase en <html>), para que
+     sin JS el contenido se sirva visible y no quede nada esperando un reveal
+     que no va a llegar. */
+  .js-motion .anim-rise {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  .js-motion .mask-line,
+  .js-motion .stack-row > span {
+    transform: translateY(105%);
+  }
+
+  .js-motion .hero-photo {
+    clip-path: inset(100% 0% 0% 0%);
+  }
+
+  /* Cada fila del wordmark apilado del Hero se enmascara sola. */
+  .stack-row {
+    display: block;
+    overflow: hidden;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   PhotoSwipe — el lightbox propio de la galeria.
+   La libreria trae su CSS con variables propias. Aqui solo se ajusta el
+   fondo al carbon del sitio y se apaga el zoom del cursor sobre los
+   controles, que en desktop compite con el hover de la rejilla.
+--------------------------------------------------------------------------- */
+.pswp {
+  --pswp-bg: #0f0f12;
+  --pswp-placeholder-bg: #1f1f24;
+  --pswp-icon-color: #f5f3ef;
+  --pswp-icon-color-secondary: #16161a;
+}
+
+/* Pie de foto del visor. Mismo folio que los `RunningHead` de la pagina:
+   versalita, tracking abierto y un filete de acento a la izquierda. */
+.pswp-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 1.25rem 1.5rem;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #f5f3ef;
+  text-shadow: 0 1px 12px rgb(0 0 0 / 0.8);
+  pointer-events: none;
+}
+
+.pswp-caption:empty {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Movimiento reducido — nada se mueve, nada se pierde.
+   Se neutraliza tambien el estado inicial oculto: sin animacion no puede
+   haber nada esperando a ser revelado.
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .js-motion .anim-rise,
+  .js-motion .mask-line,
+  .js-motion .stack-row > span {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .js-motion .hero-photo {
+    clip-path: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

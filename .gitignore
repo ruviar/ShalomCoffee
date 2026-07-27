@@ -1,0 +1,23 @@
+# dependencias
+/node_modules
+
+# material de referencia de diseño (capturas de Instagram/Google Maps,
+# originales sin comprimir): uso interno, nunca se publica
+/imagenes/
+
+# build de Next.js
+/.next/
+/out/
+tsconfig.tsbuildinfo
+next-env.d.ts
+
+# entorno
+.env*
+!.env.example
+
+# sistema
+.DS_Store
+Thumbs.db
+
+# logs
+npm-debug.log*
