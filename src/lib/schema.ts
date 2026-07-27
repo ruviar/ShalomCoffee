@@ -1,5 +1,5 @@
 import { schedule } from "@/data/hours";
-import { menu } from "@/data/menu";
+
 import { site } from "@/data/site";
 
 /**
@@ -36,25 +36,12 @@ export function buildLocalBusinessSchema() {
     },
     sameAs: [site.social.instagram.url],
     openingHoursSpecification,
+    // El detalle de productos ya no se itemiza aqui: listarlo obligaria al
+    // layout raiz (se renderiza en cada pagina) a depender de un fetch
+    // externo a Google Sheets solo para el JSON-LD.
     hasMenu: {
       "@type": "Menu",
       url: `${site.url}/#carta`,
-      hasMenuSection: menu.flatMap((tab) =>
-        tab.groups.map((group) => ({
-          "@type": "MenuSection",
-          name: `${tab.label} · ${group.title}`,
-          hasMenuItem: group.items.map((item) => ({
-            "@type": "MenuItem",
-            name: item.name,
-            ...(item.note ? { description: item.note } : {}),
-            offers: {
-              "@type": "Offer",
-              price: item.price.toFixed(2),
-              priceCurrency: "EUR",
-            },
-          })),
-        }))
-      ),
     },
   };
 
