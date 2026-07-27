@@ -4,10 +4,14 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [75, 85, 90],
+    // La carta dinamica deja que el dueño pegue cualquier URL https en
+    // foto_url. Sin un comodin aqui, Next.js rechazaria imagenes de hosts no
+    // listados y cada foto nueva de un servicio distinto exigiria un
+    // redeploy — justo lo que la carta dinamica quiere evitar.
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "images.unsplash.com",
+        hostname: "**",
       },
     ],
   },
