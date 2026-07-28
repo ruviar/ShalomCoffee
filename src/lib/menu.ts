@@ -161,10 +161,10 @@ export async function getMenu(): Promise<MenuData | null> {
   try {
     const response = await fetch(url, {
       signal: AbortSignal.timeout(8000),
-      // 300s: cuanto tarda como maximo un cambio en la hoja en reflejarse en
+      // 60s: cuanto tarda como maximo un cambio en la hoja en reflejarse en
       // la web. Bajarlo la hace mas reactiva a costa de mas trafico contra
       // Google Sheets; subirlo, al reves.
-      next: { revalidate: 300 },
+      next: { revalidate: 60 },
     });
     if (!response.ok) {
       throw new Error(`respuesta ${response.status} al pedir el CSV`);
